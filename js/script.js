@@ -8,29 +8,6 @@
   });
 })();
 
-// Theme toggle
-const themeToggle = document.getElementById("themeToggle");
-if (themeToggle) {
-  themeToggle.addEventListener("click", () => {
-    const currentTheme = document.documentElement.getAttribute("data-theme");
-    const newTheme = currentTheme === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", newTheme);
-    localStorage.setItem("theme", newTheme);
-    themeToggle.innerHTML =
-      newTheme === "dark"
-        ? '<i class="bi bi-sun"></i>'
-        : '<i class="bi bi-moon"></i>';
-  });
-
-  // Load saved theme
-  const savedTheme = localStorage.getItem("theme") || "light";
-  document.documentElement.setAttribute("data-theme", savedTheme);
-  themeToggle.innerHTML =
-    savedTheme === "dark"
-      ? '<i class="bi bi-sun"></i>'
-      : '<i class="bi bi-moon"></i>';
-}
-
 // Certification modal dynamic content
 var certModal = document.getElementById("certModal");
 if (certModal) {
