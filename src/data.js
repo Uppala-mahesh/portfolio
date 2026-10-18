@@ -1,7 +1,4 @@
-// ---------------------------------------------------------------------------
-// Single source of truth for all site content.
-// ---------------------------------------------------------------------------
-
+// ─── Site content ─────────────────────────────────────────────
 export const identity = {
   name: 'Mahesh Uppala',
   short: 'MU',
@@ -19,22 +16,58 @@ export const identity = {
 export const nav = [
   { label: 'Stack', href: '#stack' },
   { label: 'Projects', href: '#projects' },
+  { label: 'Coursework', href: '#coursework' },
   { label: 'Credentials', href: '#credentials' },
   { label: 'Contact', href: '#contact' },
 ]
 
-// ---------------------------------------------------------------------------
-// Stack node-map (hero signature): nodes + edges rendered as an SVG graph.
-// Coordinates live in a 440 × 360 viewBox.
-// ---------------------------------------------------------------------------
+export const metrics = [
+  { k: 'CGPA', v: '8.1 / 10', note: 'B.E. IT — Vasavi College' },
+  { k: 'Certifications', v: '04', note: 'NPTEL + Cisco NetAcad' },
+  { k: 'Projects shipped', v: '06', note: 'from C to full-stack AI' },
+  { k: 'Season', v: '2027', note: 'placements — DSA daily' },
+]
+
+export const now = [
+  { label: 'Studying', text: 'B.E. IT — Semester V at Vasavi College of Engineering, Hyderabad' },
+  { label: 'Training', text: 'Data structures & algorithms daily — targeting the 2027 placement season' },
+  { label: 'Building', text: 'Smart India Hackathon 2026 — a privacy-first browser agent (in progress)' },
+  { label: 'Shipping', text: 'This site — designed and coded from scratch, no templates' },
+]
+
+// hidden annotation layer — the page answers the cursor
+export const spotlight = [
+  'cgpa 8.1 / 10',
+  'DSA — daily',
+  '2027 placement season',
+  'SIH 2026 · in progress',
+  'npm · git · vite',
+  'joy of computing — 87%',
+  'CCNA ×2 + cyber analyst',
+  'hyderabad · telangana',
+  '22 pages shipped',
+  '10 tool-calling functions',
+  'wake word: on',
+  'C — from scratch',
+  'react + tailwind',
+  'tRPC = typed APIs',
+  'mysql · mongodb',
+  'os · cn · dbms · oop',
+  'aptitude — mon/wed/fri',
+  'no templates',
+  'graph theory, for real',
+  'day 001 — arrays',
+  'spoken explanations — tues',
+  'interview-mode cores',
+]
 
 export const nodeMap = {
   nodes: [
-    { id: 'java', label: 'Java', cx: 220, cy: 66, r: 36, detail: 'OOP core · course portfolio · interview language' },
-    { id: 'c', label: 'C', cx: 82, cy: 138, r: 27, detail: 'Systems & memory · data structures coursework' },
-    { id: 'sql', label: 'SQL', cx: 360, cy: 148, r: 25, detail: 'MySQL · schema design · PL/SQL' },
-    { id: 'python', label: 'Py', cx: 118, cy: 282, r: 30, detail: 'ML pipelines · NumPy · scikit-learn' },
-    { id: 'js', label: 'JS', cx: 296, cy: 290, r: 34, detail: 'React · Node/Express · this site' },
+    { id: 'java', label: 'java', x: 220, y: 66, r: 36, detail: 'OOP core · course portfolio · interview language' },
+    { id: 'c', label: 'c', x: 82, y: 138, r: 27, detail: 'Systems & memory · data structures coursework' },
+    { id: 'sql', label: 'sql', x: 360, y: 148, r: 25, detail: 'MySQL · schema design · PL/SQL' },
+    { id: 'python', label: 'python', x: 118, y: 282, r: 30, detail: 'ML pipelines · NumPy · scikit-learn' },
+    { id: 'js', label: 'js', x: 296, y: 290, r: 34, detail: 'React · Node/Express · this site' },
   ],
   edges: [
     ['java', 'c'],
@@ -48,137 +81,164 @@ export const nodeMap = {
 }
 
 export const stack = [
-  { label: 'Languages', items: ['C', 'Java', 'Python', 'JavaScript', 'SQL'] },
-  { label: 'Web', items: ['React', 'Node.js', 'Express', 'REST APIs', 'HTML5', 'CSS3'] },
-  { label: 'AI / ML', items: ['NumPy', 'Pandas', 'scikit-learn', 'Model Training'] },
-  { label: 'Data', items: ['MySQL', 'MongoDB', 'Database Design'] },
-  { label: 'Core CS', items: ['Data Structures', 'Algorithms', 'DBMS', 'Operating Systems', 'Networks'] },
-  { label: 'Tools', items: ['Git', 'GitHub', 'VS Code', 'Linux'] },
+  { group: 'Languages', items: ['C', 'Java', 'Python', 'JavaScript', 'SQL'] },
+  { group: 'Web', items: ['React', 'Node.js', 'Express', 'REST APIs', 'HTML5', 'CSS3'] },
+  { group: 'AI / ML', items: ['NumPy', 'Pandas', 'scikit-learn', 'Model Training'] },
+  { group: 'Data', items: ['MySQL', 'MongoDB', 'Database Design'] },
+  { group: 'Core CS', items: ['Data Structures', 'Algorithms', 'DBMS', 'Operating Systems', 'Networks'] },
+  { group: 'Tools', items: ['Git', 'GitHub', 'VS Code', 'Linux'] },
 ]
-
-// ---------------------------------------------------------------------------
-// Projects — specimen rows, ordered strongest-first.
-// `art` selects the procedural SVG panel drawn for each row.
-// ---------------------------------------------------------------------------
 
 export const projects = [
   {
     id: 'P.01',
     name: 'VCE Website Redesign',
     year: '2026',
+    art: 'wireframe',
     blurb:
       'A 22-page redesign concept for my college website — static HTML/CSS/JS with its own design system, flashed straight to GitHub Pages.',
     chips: ['HTML', 'CSS', 'JavaScript', 'Design System'],
+    stats: [
+      ['pages', '22'],
+      ['deploy', 'GitHub Pages'],
+      ['assets', 'official VCE logo'],
+    ],
     links: [
       { label: 'Live', href: 'https://uppala-mahesh.github.io/vce-website/' },
       { label: 'Code', href: 'https://github.com/Uppala-mahesh/vce-website' },
     ],
-    art: 'wireframe',
   },
   {
     id: 'P.02',
     name: 'J.A.R.V.I.S. — Personal AI Assistant',
     year: '2026',
+    art: 'orbit',
     blurb:
       'A sci-fi HUD assistant with a streaming AI core (Gemini + fallback) and 10 real function-calling tools — weather, news, search, crypto, tasks, memory — plus push-to-talk voice and a wake word.',
     chips: ['JavaScript', 'Node.js', 'Express', 'Gemini API', 'SSE', 'WebAudio'],
+    stats: [
+      ['tools', '10 function calls'],
+      ['ai', 'gemini + fallback'],
+      ['voice', 'push-to-talk + wake word'],
+      ['mode', 'demo without key'],
+    ],
     links: [
-      { label: 'Live', href: 'https://parable-flame.vercel.app' },
+      { label: 'Live', href: 'https://parable-flame.vercel.app/' },
       { label: 'Code', href: 'https://github.com/Uppala-mahesh/parable' },
     ],
-    art: 'orbit',
   },
   {
     id: 'P.03',
     name: 'Banking Management System',
     year: '2025',
+    art: 'ledger',
     blurb:
       'A Java desktop banking application built on OOP fundamentals with an SQL persistence layer — the project where I learned to model accounts, transactions, and exceptions properly.',
     chips: ['Java', 'OOP', 'MySQL'],
+    stats: [
+      ['core', 'object-oriented'],
+      ['handling', 'exceptions modeled'],
+      ['storage', 'SQL persistence'],
+    ],
     links: [{ label: 'Code', href: 'https://github.com/Uppala-mahesh/banking-management-system' }],
-    art: 'ledger',
   },
   {
     id: 'P.04',
     name: 'Battery Health — SOH / RUL Prediction',
     year: '2026',
+    art: 'wave',
     blurb:
       'A full-stack TypeScript dashboard that predicts battery State-of-Health and Remaining Useful Life — typed end-to-end APIs, relational storage, live charts.',
     chips: ['TypeScript', 'React', 'tRPC', 'MySQL', 'Recharts'],
+    stats: [
+      ['api', 'tRPC end-to-end'],
+      ['db', 'mysql + drizzle'],
+      ['ui', 'live charts'],
+    ],
     links: [],
-    art: 'wave',
   },
   {
     id: 'P.05',
     name: 'NyayAI — Legal Information Platform',
     year: '2026',
+    art: 'nodes',
     blurb:
       'An AI-assisted platform concept that makes Indian legal information approachable — the prototype that pushed me into retrieval, speech, and pipeline design.',
     chips: ['Python', 'AI Pipelines', 'Prototype'],
+    stats: [
+      ['focus', 'retrieval'],
+      ['input', 'speech'],
+      ['arch', 'pipeline design'],
+    ],
     links: [],
-    art: 'nodes',
   },
   {
     id: 'P.06',
     name: 'Blockchain Simulator',
     year: '2025',
+    art: 'chain',
     blurb:
       'A blockchain built from scratch in C — blocks, hashing, and chain validation with zero external libraries. My first taste of systems-programming discipline.',
     chips: ['C', 'Hashing', 'From Scratch'],
+    stats: [
+      ['libs', 'zero'],
+      ['pieces', 'blocks + hashing'],
+      ['validates', 'the chain'],
+    ],
     links: [],
-    art: 'chain',
+  },
+]
+
+export const semesterMap = [
+  {
+    sem: 'Sem III',
+    year: '2025 — 26',
+    courses: ['Discrete Mathematics', 'Digital Electronics & Logic Design', 'Data Structures + Lab', 'OOP with Java + Lab'],
+  },
+  {
+    sem: 'Sem IV',
+    year: '2026',
+    courses: [
+      'Probability & Statistics',
+      'Computer Organization',
+      'DBMS + Lab',
+      'Design & Analysis of Algorithms + Lab',
+      'Full-Stack Development + Lab',
+      'Aptitude (SDC-III)',
+    ],
+  },
+  {
+    sem: 'Sem V',
+    year: 'in progress',
+    courses: [
+      'Computer Networks + Lab',
+      'AI & Machine Learning + Lab',
+      'Software Engineering + Lab',
+      'Operating Systems + Lab',
+      'Transform Techniques (OE)',
+      'Communication Skills-II',
+      'Technical Skills-III',
+      'Theme-Based Project',
+    ],
   },
 ]
 
 export const education = [
   {
-    period: '2024 — PRESENT',
+    period: '2024 — present',
     title: 'B.E. Information Technology',
     org: 'Vasavi College of Engineering (Autonomous), Hyderabad',
-    note: 'CGPA 8.1 / 10 · Currently in Semester V · Coursework: DSA, OOP, DBMS, OS, CN, SE, AI&ML',
+    note: 'CGPA 8.1 / 10 · Semester V · DSA, OOP, DBMS, OS, CN, SE, AI&ML',
   },
-  {
-    period: '2022 — 2024',
-    title: 'Intermediate — MPC',
-    org: 'Sri Chaitanya Junior College',
-    note: '92.7%',
-  },
-  {
-    period: 'UP TO 2022',
-    title: 'Secondary School',
-    org: 'Little Flower High School',
-    note: 'CGPA 9.5 / 10',
-  },
+  { period: '2022 — 2024', title: 'Intermediate — MPC', org: 'Sri Chaitanya Junior College', note: '92.7 %' },
+  { period: 'up to 2022', title: 'Secondary School', org: 'Little Flower High School', note: 'CGPA 9.5 / 10' },
 ]
 
 export const certifications = [
-  {
-    name: 'The Joy of Computing using Python',
-    issuer: 'NPTEL',
-    detail: 'Scored 87% · Elite',
-  },
-  {
-    name: 'CCNA: Introduction to Networks',
-    issuer: 'Cisco Networking Academy',
-    detail: 'Routing & switching fundamentals',
-  },
-  {
-    name: 'CCNA: Switching, Routing & Wireless Essentials',
-    issuer: 'Cisco Networking Academy',
-    detail: 'Enterprise network operations',
-  },
-  {
-    name: 'Junior Cybersecurity Analyst Career Path',
-    issuer: 'Cisco Networking Academy',
-    detail: 'Security operations & threat basics',
-  },
-]
-
-export const now = [
-  { k: 'Studying', v: 'B.E. IT — Semester V at Vasavi College of Engineering, Hyderabad' },
-  { k: 'Training', v: 'Data structures & algorithms daily — targeting the 2027 placement season' },
-  { k: 'Building', v: 'Smart India Hackathon 2026 — a privacy-first browser agent (in progress)' },
-  { k: 'Shipping', v: 'This site — designed and coded from scratch, no templates' },
+  { name: 'The Joy of Computing using Python', issuer: 'NPTEL', note: 'Scored 87% · Elite' },
+  { name: 'CCNA: Introduction to Networks', issuer: 'Cisco Networking Academy', note: 'Routing & switching fundamentals' },
+  { name: 'CCNA: Switching, Routing & Wireless Essentials', issuer: 'Cisco Networking Academy', note: 'Enterprise network operations' },
+  { name: 'Junior Cybersecurity Analyst Career Path', issuer: 'Cisco Networking Academy', note: 'Security operations & threat basics' },
 ]
 
 export const contact = {

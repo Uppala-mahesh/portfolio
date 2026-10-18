@@ -1,9 +1,10 @@
-import { useState } from 'react'
-import { identity, nodeMap } from '../data'
+import { useRef, useState } from 'react'
+import { identity, nodeMap, spotlight } from '../data'
 
 /**
- * Signature element: the stack as a small interactive graph.
- * Hover / focus / tap a node to highlight its edges and read its detail line.
+ * The stack as a small interactive graph — light edition.
+ * Hover / focus / tap a node: its edges light up tomato and its
+ * detail line shows below.
  */
 function NodeMap() {
   const [active, setActive] = useState('java')
@@ -11,7 +12,7 @@ function NodeMap() {
   const activeNode = byId[active]
 
   return (
-    <div className="hero-in" style={{ animationDelay: '0.2s' }}>
+    <div>
       <svg
         viewBox="0 0 440 360"
         role="img"
@@ -25,18 +26,16 @@ function NodeMap() {
           return (
             <line
               key={i}
-              x1={na.cx}
-              y1={na.cy}
-              x2={nb.cx}
-              y2={nb.cy}
-              stroke={isActive ? 'var(--color-copper)' : 'var(--color-line)'}
-              strokeWidth={isActive ? 1.6 : 1}
-              opacity={isActive ? 0.9 : 0.75}
-              style={{ transition: 'stroke 0.3s ease, opacity 0.3s ease' }}
+              x1={na.x}
+              y1={na.y}
+              x2={nb.x}
+              y2={nb.y}
+              stroke={isActive ? 'var(--color-tomato)' : 'var(--color-line)'}
+              strokeWidth={isActive ? 1.6 : 1.2}
+              className={isActive ? 'edge-drift' : undefined}
             />
           )
         })}
-
         {nodeMap.nodes.map((n) => {
           const isActive = active === n.id
           return (
@@ -44,38 +43,34 @@ function NodeMap() {
               key={n.id}
               tabIndex={0}
               role="button"
-              aria-label={`${n.label}: ${n.detail}`}
-              className="cursor-pointer outline-none"
+              aria-label={n.label}
               onMouseEnter={() => setActive(n.id)}
               onFocus={() => setActive(n.id)}
               onClick={() => setActive(n.id)}
+              style={{ cursor: 'pointer' }}
             >
               <circle
-                cx={n.cx}
-                cy={n.cy}
-                r={n.r + 12}
-                fill={isActive ? 'var(--color-copper)' : 'var(--color-teal)'}
-                opacity={isActive ? 0.08 : 0.04}
+                cx={n.x}
+                cy={n.y}
+                r={n.r + 10}
+                fill={isActive ? 'rgba(228,87,46,0.12)' : 'rgba(15,118,110,0.10)'}
                 className="node-pulse"
               />
               <circle
-                cx={n.cx}
-                cy={n.cy}
+                cx={n.x}
+                cy={n.y}
                 r={n.r}
                 fill="var(--color-panel)"
-                stroke={isActive ? 'var(--color-copper)' : 'var(--color-line)'}
-                strokeWidth="1.2"
-                style={{ transition: 'stroke 0.3s ease' }}
+                stroke={isActive ? 'var(--color-tomato)' : 'var(--color-line)'}
+                strokeWidth={isActive ? 1.6 : 1.2}
               />
               <text
-                x={n.cx}
-                y={n.cy + 4}
+                x={n.x}
+                y={n.y + 4}
                 textAnchor="middle"
                 fontFamily="var(--font-mono)"
-                fontSize={n.r >= 30 ? 14 : 12}
-                letterSpacing="0.06em"
-                fill={isActive ? 'var(--color-copper)' : 'var(--color-paper)'}
-                style={{ transition: 'fill 0.3s ease' }}
+                fontSize="11"
+                fill={isActive ? 'var(--color-tomato)' : 'var(--color-muted)'}
               >
                 {n.label}
               </text>
@@ -83,61 +78,113 @@ function NodeMap() {
           )
         })}
       </svg>
-
-      <div className="mt-4 min-h-[3.5rem] border-t border-line pt-4">
-        <p className="eyebrow text-copper">{`NODE — ${activeNode.label}`}</p>
-        <p className="mt-1 text-sm text-muted">{activeNode.detail}</p>
+      <div className="mt-4 border-t border-line pt-4">
+        <p className="eyebrow text-tomato">NODE — {activeNode.label}</p>
+        <p className="font-mono mt-1.5 text-xs text-muted">{activeNode.detail}</p>
       </div>
     </div>
   )
 }
 
-export default function Hero() {
+/** The dense annotation field — rendered twice: ghost + cursor-lit. */
+function FieldText() {
   return (
-    <section id="top" className="texture-grid">
-      <div className="mx-auto grid max-w-6xl gap-14 px-6 pt-36 pb-20 md:grid-cols-12 md:gap-8 md:pt-44 md:pb-28">
-        <div className="md:col-span-7">
-          <p className="eyebrow hero-in text-copper">{identity.eyebrow}</p>
-          <h1 className="hero-in mt-6 font-display text-5xl leading-[0.98] font-semibold tracking-tight sm:text-6xl lg:text-7xl">
-            {identity.name}
+    <div className="flex h-full w-full flex-wrap content-around justify-around gap-x-8 gap-y-10 p-14">
+      {spotlight.map((s, i) => (
+        <span
+          key={i}
+          className={`font-mono text-xs uppercase tracking-widest ${
+            i % 7 === 0 ? 'text-tomato' : i % 5 === 0 ? 'text-teal' : 'text-ink'
+          } ${i % 2 ? 'rotate-2' : '-rotate-2'}`}
+        >
+          {s}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+export default function Hero() {
+  const ref = useRef(null)
+
+  const setMask = (e) => {
+    const el = ref.current
+    if (!el) return
+    const r = el.getBoundingClientRect()
+    el.style.setProperty('--mx', `${e.clientX - r.left}px`)
+    el.style.setProperty('--my', `${e.clientY - r.top}px`)
+  }
+
+  return (
+    <section
+      id="top"
+      ref={ref}
+      onMouseMove={setMask}
+      data-hot
+      className="texture-grid relative border-b border-line"
+    >
+      {/* hidden annotation layer — ghost always on, cursor lights it up */}
+      <div aria-hidden="true" className="spot-layer spot-field pointer-events-none select-none">
+        <FieldText />
+      </div>
+      <div aria-hidden="true" className="spot-layer spot-hot pointer-events-none select-none">
+        <FieldText />
+      </div>
+
+      <div className="relative z-10 mx-auto grid max-w-6xl gap-14 px-6 pb-20 pt-32 md:grid-cols-12 md:pb-28 md:pt-44">
+        <div className="hero-in md:col-span-7">
+          <p className="eyebrow text-tomato">{identity.eyebrow}</p>
+          <h1 className="font-display mt-5 text-5xl font-extrabold uppercase leading-[0.95] tracking-tight sm:text-6xl md:text-7xl">
+            Mahesh
+            <br />
+            <span className="relative inline-block">
+              Uppala
+              <svg className="absolute -bottom-1 left-0 w-full" viewBox="0 0 240 14" fill="none" aria-hidden="true">
+                <path
+                  className="marker-draw"
+                  d="M3 10 C 60 4, 150 4, 237 8"
+                  stroke="var(--color-marker)"
+                  strokeWidth="7"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
           </h1>
-          <p
-            className="hero-in mt-8 max-w-xl text-lg leading-relaxed text-muted"
-            style={{ animationDelay: '0.12s' }}
-          >
-            {identity.intro}
-          </p>
-          <div
-            className="hero-in mt-10 flex flex-wrap items-center gap-x-8 gap-y-4"
-            style={{ animationDelay: '0.22s' }}
-          >
+          <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted">{identity.intro}</p>
+
+          <div className="mt-9 flex flex-wrap items-center gap-6">
             <a
               href="#projects"
-              className="rounded-full bg-copper px-6 py-3 font-mono text-xs tracking-[0.14em] uppercase text-ink transition-transform hover:-translate-y-0.5"
+              data-hot
+              className="font-mono rounded-full bg-tomato px-7 py-3.5 text-xs uppercase tracking-wider text-paper transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-14px_rgba(228,87,46,0.7)]"
             >
-              See projects
+              See projects ↓
             </a>
             <a
               href={`mailto:${identity.email}`}
-              className="link-underline font-mono text-xs tracking-[0.14em] uppercase text-paper"
+              data-hot
+              className="link-underline font-mono text-xs uppercase tracking-wider text-ink hover:text-tomato"
             >
-              {identity.email}
+              Email me ↗
             </a>
           </div>
-          <div
-            className="hero-in mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-muted"
-            style={{ animationDelay: '0.32s' }}
-          >
-            <span className="inline-flex items-center gap-2 rounded-full border border-line px-3.5 py-2 font-mono tracking-[0.08em] uppercase">
-              <span className="node-pulse h-1.5 w-1.5 rounded-full bg-teal" />
+
+          <div className="mt-10 flex flex-wrap items-center gap-5">
+            <span className="chip inline-flex items-center gap-2">
+              <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-teal" />
               {identity.status}
             </span>
-            <span className="font-mono tracking-[0.08em] uppercase">{identity.location}</span>
+            <span className="font-mono text-xs uppercase tracking-wider text-muted">{identity.location}</span>
           </div>
+
+          <p className="u-note mt-8 text-sm">— the annotations? move your cursor across this page. it answers.</p>
         </div>
 
-        <div className="md:col-span-5 md:pt-6">
+        <div className="hero-in md:col-span-5 md:pt-6" style={{ animationDelay: '0.25s' }} data-hot>
           <NodeMap />
+          <p className="font-mono mt-4 text-center text-[11px] uppercase tracking-wider text-muted">
+            hover a node — the graph answers
+          </p>
         </div>
       </div>
     </section>

@@ -1,180 +1,115 @@
-/**
- * Procedural SVG art for project rows. Decorative only.
- * Each project gets a unique panel drawn from simple geometry — no fake screenshots.
- */
+const Frame = ({ label, children }) => (
+  <div className="rounded-xl border border-line bg-panel p-4 transition-colors duration-300 group-hover:border-tomato/40">
+    <svg viewBox="0 0 560 150" className="w-full" role="img" aria-label={label}>
+      {children}
+    </svg>
+  </div>
+)
 
-const C = {
-  line: 'var(--color-line)',
-  copper: 'var(--color-copper)',
-  teal: 'var(--color-teal)',
-  panel: 'var(--color-panel)',
-}
+const L = 'var(--color-line)'
+const MUTED = 'var(--color-muted)'
+const TOMATO = 'var(--color-tomato)'
+const TEAL = 'var(--color-teal)'
+const INK = 'var(--color-ink)'
 
-function Frame({ children }) {
-  return (
-    <div className="overflow-hidden rounded-lg border border-line bg-panel transition-colors group-hover:border-copper/40">
-      <svg viewBox="0 0 560 150" className="block w-full" aria-hidden="true">
-        {children}
-      </svg>
-    </div>
-  )
-}
-
-function Wireframe() {
-  return (
-    <Frame>
-      <g stroke={C.line} fill="none" strokeWidth="1">
-        <rect x="28" y="20" width="504" height="110" rx="6" />
-        <line x1="28" y1="42" x2="532" y2="42" />
-        <circle cx="46" cy="31" r="2.6" />
-        <circle cx="58" cy="31" r="2.6" />
-        <circle cx="70" cy="31" r="2.6" />
-        <rect x="52" y="58" width="190" height="54" rx="4" stroke={C.copper} />
-        <line x1="70" y1="76" x2="150" y2="76" stroke={C.copper} opacity="0.75" />
-        <line x1="70" y1="88" x2="196" y2="88" opacity="0.75" />
-        <rect x="70" y="98" width="64" height="10" rx="5" stroke={C.teal} />
-        <rect x="262" y="58" width="118" height="14" rx="3" />
-        <rect x="262" y="80" width="240" height="8" rx="3" opacity="0.7" />
-        <rect x="262" y="94" width="196" height="8" rx="3" opacity="0.55" />
-        <rect x="262" y="108" width="150" height="8" rx="3" opacity="0.4" />
-        <rect x="400" y="58" width="112" height="14" rx="3" opacity="0.7" />
-        <rect x="400" y="80" width="112" height="36" rx="4" opacity="0.7" />
-      </g>
-    </Frame>
-  )
-}
-
-function Orbit() {
-  const dots = [
-    [308, 85], [257, 94], [326, 75], [280, 121], [237, 59],
-    [320, 122], [219, 86], [259, 17], [295, 49], [320, 27],
-  ]
-  return (
-    <Frame>
-      <g fill="none">
-        <circle cx="280" cy="75" r="46" stroke={C.line} strokeDasharray="4 8" opacity="0.8" />
-        <circle cx="280" cy="75" r="62" stroke={C.line} strokeDasharray="4 10" opacity="0.6" />
-        <circle cx="280" cy="75" r="30" stroke={C.line} strokeDasharray="4 6" />
-        <circle cx="280" cy="75" r="15" stroke={C.copper} strokeWidth="1.6" />
-        <circle cx="280" cy="75" r="6" fill={C.copper} opacity="0.85" />
-        {dots.map(([x, y], i) => (
-          <circle key={i} cx={x} cy={y} r="2.6" fill={i % 3 === 0 ? C.copper : C.teal} opacity="0.9" />
-        ))}
-      </g>
-    </Frame>
-  )
-}
-
-function Ledger() {
-  const rows = [34, 52, 70, 88, 106, 124]
-  return (
-    <Frame>
-      <g stroke={C.line} strokeWidth="1">
-        {rows.map((y, i) => (
-          <line key={y} x1="52" y1={y} x2={150 + ((i * 37) % 110)} y2={y} />
-        ))}
-        {rows.map((y, i) => (
-          <line key={`a${y}`} x1="352" y1={y} x2={402 + ((i * 23) % 70)} y2={y} opacity="0.7" />
-        ))}
-        <rect x="470" y="29" width="42" height="10" rx="3" fill={C.teal} opacity="0.55" stroke="none" />
-        <rect x="456" y="47" width="56" height="10" rx="3" fill={C.line} opacity="0.6" stroke="none" />
-        <rect x="470" y="65" width="42" height="10" rx="3" fill={C.teal} opacity="0.4" stroke="none" />
-        <rect x="456" y="83" width="56" height="10" rx="3" fill={C.line} opacity="0.45" stroke="none" />
-        <rect x="470" y="101" width="42" height="10" rx="3" fill={C.teal} opacity="0.3" stroke="none" />
-        <rect x="448" y="119" width="64" height="12" rx="3" fill={C.copper} opacity="0.7" stroke="none" />
-      </g>
-    </Frame>
-  )
-}
-
-function Wave() {
-  return (
-    <Frame>
-      <g stroke={C.line} strokeWidth="1">
-        {[98, 168, 238, 308, 378, 448].map((x) => (
-          <line key={x} x1={x} y1="22" x2={x} y2="128" opacity="0.35" />
-        ))}
-        <line x1="28" y1="75" x2="532" y2="75" opacity="0.35" strokeDasharray="2 6" />
-      </g>
-      <line x1="28" y1="92" x2="532" y2="92" stroke={C.teal} strokeWidth="1" strokeDasharray="5 6" opacity="0.7" />
+const ARTS = {
+  wireframe: (
+    <g fill="none" stroke={L}>
+      <rect x="24" y="16" width="130" height="13" rx="3" />
+      <rect x="24" y="42" width="205" height="34" rx="5" fill="var(--color-tomato)" stroke="none" opacity="0.9" />
+      <rect x="24" y="92" width="88" height="34" rx="4" />
+      <rect x="124" y="92" width="88" height="34" rx="4" />
+      <rect x="224" y="92" width="88" height="34" rx="4" />
+      <rect x="250" y="16" width="286" height="10" rx="3" stroke={MUTED} />
+      <rect x="250" y="34" width="230" height="10" rx="3" stroke={MUTED} />
+      <rect x="250" y="52" width="258" height="10" rx="3" stroke={MUTED} />
+      <rect x="382" y="92" width="154" height="34" rx="4" stroke={TEAL} />
+      <text x="26" y="27" fill={MUTED} stroke="none" fontSize="9" fontFamily="var(--font-mono)">index.html</text>
+    </g>
+  ),
+  orbit: (
+    <g fill="none" stroke={L}>
+      <circle cx="96" cy="75" r="18" stroke="var(--color-tomato)" strokeWidth="2" />
+      <circle cx="96" cy="75" r="34" strokeDasharray="4 6" />
+      <circle cx="96" cy="75" r="52" strokeDasharray="2 7" stroke={MUTED} />
+      <circle cx="96" cy="23" r="4" fill="var(--color-tomato)" stroke="none" className="node-pulse" />
+      <circle cx="146" cy="96" r="3.5" fill="var(--color-teal)" stroke="none" />
+      <circle cx="44" cy="60" r="3" fill={MUTED} stroke="none" />
+      <rect x="320" y="30" width="180" height="9" rx="3" stroke={MUTED} />
+      <rect x="320" y="52" width="150" height="9" rx="3" stroke={MUTED} />
+      <rect x="320" y="74" width="200" height="9" rx="3" stroke={MUTED} />
+      <rect x="320" y="96" width="118" height="28" rx="4" stroke="var(--color-tomato)" />
+    </g>
+  ),
+  ledger: (
+    <g stroke={L}>
+      <rect x="24" y="18" width="180" height="12" rx="3" stroke={MUTED} />
+      <line x1="24" y1="44" x2="330" y2="44" />
+      <line x1="24" y1="70" x2="330" y2="70" />
+      <line x1="24" y1="96" x2="330" y2="96" />
+      <line x1="24" y1="122" x2="330" y2="122" />
+      <circle cx="34" cy="30" r="4" fill="var(--color-marker)" stroke="none" />
+      <rect x="380" y="44" width="150" height="14" rx="4" fill="var(--color-teal)" stroke="none" />
+      <rect x="380" y="72" width="104" height="14" rx="4" fill="var(--color-tomato)" stroke="none" />
+      <rect x="380" y="100" width="70" height="14" rx="4" stroke={MUTED} />
+      <text x="384" y="34" fill={MUTED} stroke="none" fontSize="9" fontFamily="var(--font-mono)">balance: healthy</text>
+    </g>
+  ),
+  wave: (
+    <g fill="none">
+      <line x1="24" y1="48" x2="536" y2="48" stroke="var(--color-teal)" strokeDasharray="5 6" />
       <path
-        d="M28,48 L96,46 L164,52 L232,62 L300,74 L368,84 L436,90 L500,94 L532,96"
-        fill="none"
-        stroke={C.copper}
-        strokeWidth="2"
+        d="M24 36 C 120 40, 210 52, 290 78 S 470 118, 536 126"
+        stroke="var(--color-tomato)"
+        strokeWidth="2.5"
       />
-      <circle cx="532" cy="96" r="3.2" fill={C.copper} />
-      <circle cx="96" cy="46" r="2.6" fill={C.teal} />
-      <circle cx="300" cy="74" r="2.6" fill={C.teal} opacity="0.8" />
-    </Frame>
-  )
+      <circle cx="290" cy="78" r="4" fill="var(--color-tomato)" stroke="none" />
+      <circle cx="418" cy="106" r="3.5" fill={MUTED} stroke="none" />
+      <text x="26" y="40" fill="var(--color-teal)" stroke="none" fontSize="9" fontFamily="var(--font-mono)">threshold — SOH 80%</text>
+    </g>
+  ),
+  nodes: (
+    <g stroke={L}>
+      <line x1="80" y1="40" x2="200" y2="92" />
+      <line x1="200" y1="92" x2="330" y2="34" />
+      <line x1="200" y1="92" x2="310" y2="120" />
+      <line x1="330" y1="34" x2="460" y2="88" />
+      <line x1="310" y1="120" x2="460" y2="88" />
+      <circle cx="80" cy="40" r="12" fill="var(--color-tomato)" stroke="none" />
+      <circle cx="200" cy="92" r="15" fill="var(--color-panel)" />
+      <circle cx="330" cy="34" r="10" fill="var(--color-marker)" stroke="none" />
+      <circle cx="310" cy="120" r="12" fill="var(--color-teal)" stroke="none" />
+      <circle cx="460" cy="88" r="15" fill="var(--color-panel)" stroke="var(--color-tomato)" strokeWidth="2" />
+      <text x="222" y="132" fill={MUTED} stroke="none" fontSize="9" fontFamily="var(--font-mono)">graph traversal</text>
+    </g>
+  ),
+  chain: (
+    <g stroke={L}>
+      <rect x="24" y="52" width="92" height="46" rx="8" />
+      <rect x="150" y="52" width="92" height="46" rx="8" />
+      <rect x="276" y="52" width="92" height="46" rx="8" />
+      <rect x="402" y="52" width="92" height="46" rx="8" fill="var(--color-tomato)" stroke="none" />
+      <line x1="116" y1="75" x2="150" y2="75" />
+      <line x1="242" y1="75" x2="276" y2="75" />
+      <line x1="368" y1="75" x2="402" y2="75" />
+      <line x1="36" y1="66" x2="104" y2="66" stroke={MUTED} />
+      <line x1="36" y1="78" x2="88" y2="78" stroke={MUTED} />
+      <line x1="162" y1="66" x2="230" y2="66" stroke={MUTED} />
+      <line x1="288" y1="66" x2="356" y2="66" stroke={MUTED} />
+      <text x="406" y="80" fill="var(--color-paper)" stroke="none" fontSize="9" fontFamily="var(--font-mono)">hash ✓</text>
+    </g>
+  ),
 }
 
-function Nodes() {
-  const pts = {
-    a: [90, 100], b: [210, 45], c: [330, 100], d: [450, 45], e: [280, 122],
-  }
-  const edges = [
-    ['a', 'b'], ['b', 'c'], ['c', 'd'], ['a', 'e'], ['e', 'c'],
-  ]
-  return (
-    <Frame>
-      <g stroke={C.line} strokeWidth="1">
-        {edges.map(([p, q], i) => (
-          <line key={i} x1={pts[p][0]} y1={pts[p][1]} x2={pts[q][0]} y2={pts[q][1]} />
-        ))}
-        <line x1={pts.b[0]} y1={pts.b[1]} x2={pts.d[0]} y2={pts.d[1]} stroke={C.teal} opacity="0.7" />
-      </g>
-      <g fill={C.panel} stroke={C.line} strokeWidth="1.4">
-        <circle cx={pts.a[0]} cy={pts.a[1]} r="11" />
-        <circle cx={pts.c[0]} cy={pts.c[1]} r="11" />
-        <circle cx={pts.d[0]} cy={pts.d[1]} r="11" />
-      </g>
-      <circle cx={pts.b[0]} cy={pts.b[1]} r="13" fill={C.panel} stroke={C.copper} strokeWidth="1.6" />
-      <circle cx={pts.e[0]} cy={pts.e[1]} r="11" fill={C.panel} stroke={C.teal} strokeWidth="1.6" />
-      <circle cx={pts.b[0]} cy={pts.b[1]} r="4.5" fill={C.copper} />
-      <circle cx={pts.e[0]} cy={pts.e[1]} r="4.5" fill={C.teal} />
-    </Frame>
-  )
-}
-
-function Chain() {
-  return (
-    <Frame>
-      <g stroke={C.line} strokeWidth="1.2" fill="none">
-        {[0, 1, 2, 3].map((k) => {
-          const x = 40 + k * 132
-          const isLast = k === 3
-          return (
-            <g key={k}>
-              <rect x={x} y="46" width="102" height="58" rx="6" stroke={isLast ? C.copper : C.line} />
-              <line x1={x + 14} y1="64" x2={x + 60} y2="64" stroke={isLast ? C.copper : C.line} opacity="0.8" />
-              <line x1={x + 14} y1="76" x2={x + 44} y2="76" opacity="0.55" />
-              <line x1={x + 14} y1="88" x2={x + 74} y2="88" opacity="0.35" />
-              {k < 3 && (
-                <>
-                  <line x1={x + 102} y1="75" x2={x + 132} y2="75" />
-                  <circle cx={x + 117} cy="75" r="3" stroke={k === 0 ? C.teal : C.line} />
-                </>
-              )}
-            </g>
-          )
-        })}
-      </g>
-    </Frame>
-  )
-}
-
-const artMap = {
-  wireframe: Wireframe,
-  orbit: Orbit,
-  ledger: Ledger,
-  wave: Wave,
-  nodes: Nodes,
-  chain: Chain,
+const LABELS = {
+  wireframe: 'Wireframe — site structure',
+  orbit: 'Orbit — assistant core',
+  ledger: 'Ledger — accounts',
+  wave: 'Wave — health curve',
+  nodes: 'Nodes — graph',
+  chain: 'Chain — blocks',
 }
 
 export default function ProjectArt({ kind }) {
-  const Art = artMap[kind] ?? Wireframe
-  return <Art />
+  return <Frame label={LABELS[kind]}>{ARTS[kind]}</Frame>
 }

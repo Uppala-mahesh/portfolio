@@ -2,25 +2,25 @@ import { identity, nav } from '../data'
 
 export default function Header() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-line bg-ink/85 backdrop-blur-sm">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <a href="#top" className="flex items-center gap-3">
-          <span className="grid h-8 w-8 place-items-center rounded-md bg-panel font-display text-sm font-semibold text-copper ring-1 ring-line">
-            {identity.short}
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-line bg-paper/85 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+        <a href="#top" className="flex items-center gap-3" data-hot>
+          <span className="font-display grid h-9 w-9 place-items-center rounded-lg bg-ink text-sm font-bold text-paper">
+            MU
           </span>
-          <span className="font-mono text-xs tracking-[0.18em] uppercase text-muted max-sm:hidden">
-            {identity.name}
+          <span className="font-mono hidden text-xs uppercase tracking-wider text-muted sm:block">
+            Mahesh Uppala — portfolio
           </span>
         </a>
 
-        <nav className="flex items-center gap-8 max-md:hidden" aria-label="Sections">
-          {nav.map((item) => (
+        <nav className="hidden items-center gap-7 md:flex">
+          {nav.map((n) => (
             <a
-              key={item.label}
-              href={item.href}
-              className="link-underline font-mono text-xs tracking-[0.18em] uppercase text-muted transition-colors hover:text-paper"
+              key={n.href}
+              href={n.href}
+              className="link-underline font-mono text-xs uppercase tracking-wider text-muted hover:text-ink"
             >
-              {item.label}
+              {n.label}
             </a>
           ))}
         </nav>
@@ -29,9 +29,10 @@ export default function Header() {
           href={identity.resume}
           target="_blank"
           rel="noreferrer"
-          className="rounded-full border border-line px-4 py-2 font-mono text-xs tracking-[0.14em] uppercase text-paper transition-colors hover:border-copper hover:text-copper"
+          data-hot
+          className="font-mono rounded-full border border-ink/80 px-4 py-2 text-xs uppercase tracking-wider text-ink transition hover:bg-ink hover:text-paper"
         >
-          Resume
+          Resume ↓
         </a>
       </div>
     </header>
