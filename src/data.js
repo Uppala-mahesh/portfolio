@@ -193,7 +193,7 @@ export const projects = [
       ['input', 'speech'],
       ['arch', 'pipeline design'],
     ],
-    links: [],
+    links: [{ label: 'Code', href: 'https://github.com/Uppala-mahesh/nyayai' }],
   },
   {
     id: 'P.06',
