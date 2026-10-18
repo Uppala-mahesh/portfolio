@@ -11,7 +11,9 @@ export default function useReveal() {
     const el = ref.current
     if (!el) return
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // ?noreveal → reveals instant (screenshot verification + debugging)
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+        new URLSearchParams(location.search).has('noreveal')) {
       el.classList.add('is-in')
       return
     }

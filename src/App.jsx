@@ -1,5 +1,3 @@
-import usePointer from './hooks/usePointer'
-import MouseLight from './components/MouseLight'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import MetricsStrip from './components/MetricsStrip'
@@ -11,26 +9,24 @@ import Credentials from './components/Credentials'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 
+// v3 — every v2 section is mounted again (content intact), restyled by the
+// dark token values. Stack stays mounted but outside the nav; it can be
+// folded into the project cards if the full page reads better without it.
 export default function App() {
-  usePointer()
-
   return (
-    <div className="relative min-h-screen">
-      <MouseLight />
-      <div className="relative z-10">
-        <Header />
-        <main>
-          <Hero />
-          <MetricsStrip />
-          <NowStrip />
-          <Stack />
-          <Projects />
-          <Coursemap />
-          <Credentials />
-          <Contact />
-        </main>
-        <Footer />
-      </div>
+    <div className="relative min-h-screen bg-void text-bone">
+      <Header />
+      <main>
+        <Hero />
+        <MetricsStrip />
+        <NowStrip />
+        <Projects />
+        <Coursemap />
+        <Stack />
+        <Credentials />
+        <Contact />
+      </main>
+      <Footer />
     </div>
   )
 }

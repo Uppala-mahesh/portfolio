@@ -13,13 +13,36 @@ export const identity = {
   resume: '/Mahesh_Uppala_Resume.pdf',
 }
 
+// v3: stack folds into the project cards — four real sections after the hero
 export const nav = [
-  { label: 'Stack', href: '#stack' },
   { label: 'Projects', href: '#projects' },
   { label: 'Coursework', href: '#coursework' },
   { label: 'Credentials', href: '#credentials' },
   { label: 'Contact', href: '#contact' },
 ]
+
+// ─── Hero lamp (v3) — agent-written values, REVIEW THEM ───────────────
+export const lampHero = {
+  dark: '/nataraja-dark-1600.webp',
+  gold: '/nataraja-gold-1600.webp',
+  dsaStart: '2026-10-19', // DAY 001 of the DSA placement plan
+  // Statue hotspots. at = [x, y] as fractions of the IMAGE (1600×1195).
+  // r = reach, in image-height units. The lamp must rest ~0.5 s.
+  hotspots: [
+    { id: 'drum', at: [0.4, 0.4], r: 0.14, label: 'the drum · projects', href: '#projects' },
+    { id: 'flame', at: [0.63, 0.37], r: 0.14, label: 'the flame · contact', href: '#contact' },
+    { id: 'foot', at: [0.47, 0.79], r: 0.14, label: 'the foot · coursework', href: '#coursework' },
+  ],
+}
+
+// live "DSA Day N" counter — Day 001 = 2026-10-19
+export function dsaDay() {
+  const start = new Date(lampHero.dsaStart + 'T00:00:00')
+  const n = Math.floor((Date.now() - start.getTime()) / 86400000) + 1
+  if (n >= 1) return `DSA Day ${String(n).padStart(3, '0')}`
+  const out = 1 - n
+  return `DSA Day 001 — ${out} day${out === 1 ? '' : 's'} out`
+}
 
 export const metrics = [
   { k: 'CGPA', v: '8.1 / 10', note: 'B.E. IT — Vasavi College' },

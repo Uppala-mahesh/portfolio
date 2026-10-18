@@ -1,15 +1,14 @@
 import { identity, nav } from '../data'
 
+// v3 header — dark, quiet, eventual flame-ring mark replaces the MU text
 export default function Header() {
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-line bg-paper/85 backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-40">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <a href="#top" className="flex items-center gap-3" data-hot>
-          <span className="font-display grid h-9 w-9 place-items-center rounded-lg bg-ink text-sm font-bold text-paper">
-            MU
-          </span>
-          <span className="font-mono hidden text-xs uppercase tracking-wider text-muted sm:block">
-            Mahesh Uppala — portfolio
+        <a href="#top" className="flex items-center gap-3">
+          <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-amber">MU</span>
+          <span className="font-mono hidden text-[11px] uppercase tracking-[0.24em] text-mute sm:block">
+            mahesh uppala
           </span>
         </a>
 
@@ -18,7 +17,7 @@ export default function Header() {
             <a
               key={n.href}
               href={n.href}
-              className="link-underline font-mono text-xs uppercase tracking-wider text-muted hover:text-ink"
+              className="font-mono text-[11px] uppercase tracking-[0.18em] text-mute transition-colors hover:text-bone"
             >
               {n.label}
             </a>
@@ -29,8 +28,7 @@ export default function Header() {
           href={identity.resume}
           target="_blank"
           rel="noreferrer"
-          data-hot
-          className="font-mono rounded-full border border-ink/80 px-4 py-2 text-xs uppercase tracking-wider text-ink transition hover:bg-ink hover:text-paper"
+          className="btn !py-1.5 !px-4 !text-[0.65rem]"
         >
           Resume ↓
         </a>

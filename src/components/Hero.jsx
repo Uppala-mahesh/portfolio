@@ -1,192 +1,127 @@
-import { useRef, useState } from 'react'
-import { identity, nodeMap, spotlight } from '../data'
+import { useEffect, useRef, useState } from 'react'
+import { identity, lampHero, dsaDay } from '../data'
+import { createLamp } from '../fx/lamp'
 
-/**
- * The stack as a small interactive graph — light edition.
- * Hover / focus / tap a node: its edges light up tomato and its
- * detail line shows below.
- */
-function NodeMap() {
-  const [active, setActive] = useState('java')
-  const byId = Object.fromEntries(nodeMap.nodes.map((n) => [n.id, n]))
-  const activeNode = byId[active]
+const ALT =
+  'Oxidised bronze statue of Nataraja dancing inside a ring of flames, seen from the front in near darkness. The visitor’s cursor acts as a lamp that reveals the gilded, spotlit version of the same statue.'
 
-  return (
-    <div>
-      <svg
-        viewBox="0 0 440 360"
-        role="img"
-        aria-label="Stack map — C, Java, Python, JavaScript and SQL connected as a graph"
-        className="w-full select-none"
-      >
-        {nodeMap.edges.map(([a, b], i) => {
-          const na = byId[a]
-          const nb = byId[b]
-          const isActive = active === a || active === b
-          return (
-            <line
-              key={i}
-              x1={na.x}
-              y1={na.y}
-              x2={nb.x}
-              y2={nb.y}
-              stroke={isActive ? 'var(--color-tomato)' : 'var(--color-line)'}
-              strokeWidth={isActive ? 1.6 : 1.2}
-              className={isActive ? 'edge-drift' : undefined}
-            />
-          )
-        })}
-        {nodeMap.nodes.map((n) => {
-          const isActive = active === n.id
-          return (
-            <g
-              key={n.id}
-              tabIndex={0}
-              role="button"
-              aria-label={n.label}
-              onMouseEnter={() => setActive(n.id)}
-              onFocus={() => setActive(n.id)}
-              onClick={() => setActive(n.id)}
-              style={{ cursor: 'pointer' }}
-            >
-              <circle
-                cx={n.x}
-                cy={n.y}
-                r={n.r + 10}
-                fill={isActive ? 'rgba(228,87,46,0.12)' : 'rgba(15,118,110,0.10)'}
-                className="node-pulse"
-              />
-              <circle
-                cx={n.x}
-                cy={n.y}
-                r={n.r}
-                fill="var(--color-panel)"
-                stroke={isActive ? 'var(--color-tomato)' : 'var(--color-line)'}
-                strokeWidth={isActive ? 1.6 : 1.2}
-              />
-              <text
-                x={n.x}
-                y={n.y + 4}
-                textAnchor="middle"
-                fontFamily="var(--font-mono)"
-                fontSize="11"
-                fill={isActive ? 'var(--color-tomato)' : 'var(--color-muted)'}
-              >
-                {n.label}
-              </text>
-            </g>
-          )
-        })}
-      </svg>
-      <div className="mt-4 border-t border-line pt-4">
-        <p className="eyebrow text-tomato">NODE — {activeNode.label}</p>
-        <p className="font-mono mt-1.5 text-xs text-muted">{activeNode.detail}</p>
-      </div>
-    </div>
-  )
-}
+// ?lampdebug → status badge; ?lampx / ?lampy (image fractions) pin the light
+const params = new URLSearchParams(typeof location !== 'undefined' ? location.search : '')
+const DEBUG = params.has('lampdebug')
+const PIN_X = params.get('lampx')
+const PIN_Y = params.get('lampy')
+const HERO_H = params.get('heroh') // verification-only: fixed hero height
 
-/** The dense annotation field — rendered twice: ghost + cursor-lit. */
-function FieldText() {
-  return (
-    <div className="flex h-full w-full flex-wrap content-around justify-around gap-x-8 gap-y-10 p-14">
-      {spotlight.map((s, i) => (
-        <span
-          key={i}
-          className={`font-mono text-xs uppercase tracking-widest ${
-            i % 7 === 0 ? 'text-tomato' : i % 5 === 0 ? 'text-teal' : 'text-ink'
-          } ${i % 2 ? 'rotate-2' : '-rotate-2'}`}
-        >
-          {s}
-        </span>
-      ))}
-    </div>
-  )
-}
+const goto = params.get('goto')
 
 export default function Hero() {
-  const ref = useRef(null)
+  const sectionRef = useRef(null)
+  const baseRef = useRef(null)
+  const [mode, setMode] = useState('boot') // webgl | css | boot
+  const [spot, setSpot] = useState(null)
 
-  const setMask = (e) => {
-    const el = ref.current
-    if (!el) return
-    const r = el.getBoundingClientRect()
-    el.style.setProperty('--mx', `${e.clientX - r.left}px`)
-    el.style.setProperty('--my', `${e.clientY - r.top}px`)
-  }
+  useEffect(() => {
+    // ?goto=<sectionId> — jump for screenshot verification
+    const goto = params.get('goto')
+    if (goto) {
+      requestAnimationFrame(() => {
+        document.documentElement.style.scrollBehavior = 'auto' // headless: skip smooth-anim stalls
+        document.getElementById(goto)?.scrollIntoView()
+      })
+    }
+  }, [])
+
+  useEffect(() => {
+    const lamp = createLamp({
+      mount: sectionRef.current,
+      base: baseRef.current,
+      baseSrc: lampHero.dark,
+      goldSrc: lampHero.gold,
+      hotspots: lampHero.hotspots,
+      onMode: setMode,
+      onHotspot: (id) => setSpot(id),
+      debug: DEBUG,
+    })
+    if (PIN_X || PIN_Y) lamp.force(parseFloat(PIN_X ?? '0.5'), parseFloat(PIN_Y ?? '0.35'))
+    return () => lamp.destroy()
+  }, [])
+
+  const spotDef = spot ? lampHero.hotspots.find((h) => h.id === spot) : null
 
   return (
     <section
+      ref={sectionRef}
       id="top"
-      ref={ref}
-      onMouseMove={setMask}
-      data-hot
-      className="texture-grid relative border-b border-line"
+      data-lamp={mode}
+      className="lamp relative min-h-[100svh] overflow-hidden"
+      style={HERO_H ? { minHeight: 0, height: +HERO_H } : undefined}
     >
-      {/* hidden annotation layer — ghost always on, cursor lights it up */}
-      <div aria-hidden="true" className="spot-layer spot-field pointer-events-none select-none">
-        <FieldText />
-      </div>
-      <div aria-hidden="true" className="spot-layer spot-hot pointer-events-none select-none">
-        <FieldText />
-      </div>
+      {/* semantic base photo — this is the LCP, has real alt text, and
+          carries the site alone if scripting ever fails */}
+      <img
+        ref={baseRef}
+        src={lampHero.dark}
+        alt={ALT}
+        width={1600}
+        height={1195}
+        fetchPriority="high"
+        decoding="async"
+        className="absolute inset-0 h-full w-full object-cover [object-position:50%_45%]"
+      />
+      {/* lamp canvas / css-fallback gold layer are appended by lamp.js,
+          above the photo, below the copy */}
 
-      <div className="relative z-10 mx-auto grid max-w-6xl gap-14 px-6 pb-20 pt-32 md:grid-cols-12 md:pb-28 md:pt-44">
-        <div className="hero-in md:col-span-7">
-          <p className="eyebrow text-tomato">{identity.eyebrow}</p>
-          <h1 className="font-display mt-5 text-5xl font-extrabold uppercase leading-[0.95] tracking-tight sm:text-6xl md:text-7xl">
-            Mahesh
-            <br />
-            <span className="relative inline-block">
-              Uppala
-              <svg className="absolute -bottom-1 left-0 w-full" viewBox="0 0 240 14" fill="none" aria-hidden="true">
-                <path
-                  className="marker-draw"
-                  d="M3 10 C 60 4, 150 4, 237 8"
-                  stroke="var(--color-marker)"
-                  strokeWidth="7"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-          </h1>
-          <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted">{identity.intro}</p>
+      {/* copy — plain HTML, keyboard reachable, never gated by the effect */}
+      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-center px-6 pt-20">
+        <p className="kicker">{identity.eyebrow}</p>
+        <h1 className="font-display mt-5 text-[clamp(3.2rem,10.5vw,8.75rem)] leading-[0.9] font-extrabold tracking-tight">
+          <span className="text-bone">Mahesh</span>
+          <span className="outline-name block">Uppala</span>
+        </h1>
+        <p className="font-serif mt-7 text-xl italic text-bone/90 md:text-2xl">
+          the idol is bronze — the light is yours.
+        </p>
+        <p className="mt-3 max-w-md text-[15px] leading-relaxed text-mute">
+          {identity.status}. Move the cursor through the temple; drag on a phone.
+        </p>
 
-          <div className="mt-9 flex flex-wrap items-center gap-6">
-            <a
-              href="#projects"
-              data-hot
-              className="font-mono rounded-full bg-tomato px-7 py-3.5 text-xs uppercase tracking-wider text-paper transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-14px_rgba(228,87,46,0.7)]"
-            >
-              See projects ↓
-            </a>
-            <a
-              href={`mailto:${identity.email}`}
-              data-hot
-              className="link-underline font-mono text-xs uppercase tracking-wider text-ink hover:text-tomato"
-            >
-              Email me ↗
-            </a>
-          </div>
-
-          <div className="mt-10 flex flex-wrap items-center gap-5">
-            <span className="chip inline-flex items-center gap-2">
-              <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-teal" />
-              {identity.status}
-            </span>
-            <span className="font-mono text-xs uppercase tracking-wider text-muted">{identity.location}</span>
-          </div>
-
-          <p className="u-note mt-8 text-sm">— the annotations? move your cursor across this page. it answers.</p>
+        <div className="mt-9 flex flex-wrap items-center gap-4">
+          <a href="#projects" className="btn btn-solid">
+            See the work
+          </a>
+          <a href={identity.resume} target="_blank" rel="noreferrer" className="btn">
+            Resume ↓
+          </a>
         </div>
 
-        <div className="hero-in md:col-span-5 md:pt-6" style={{ animationDelay: '0.25s' }} data-hot>
-          <NodeMap />
-          <p className="font-mono mt-4 text-center text-[11px] uppercase tracking-wider text-muted">
-            hover a node — the graph answers
-          </p>
+        <p className="font-mono mt-12 text-[10px] uppercase tracking-[0.22em] text-mute">
+          {dsaDay()} · {identity.location}
+        </p>
+
+        <div className="mt-10 flex items-center gap-3">
+          <span className="cue" aria-hidden="true" />
         </div>
       </div>
+
+      {/* hotspot caption strip — the light dwelling on a statue part speaks */}
+      <div className="absolute inset-x-0 bottom-7 z-10 flex justify-center px-6 text-center">
+        {spotDef ? (
+          <a href={spotDef.href} className="spot-link">
+            {spotDef.label} ↗
+          </a>
+        ) : (
+          <span className="spot-hint">the lamp rests — parts of the idol answer it</span>
+        )}
+      </div>
+
+      {/* screen-reader / keyboard equivalent of the statue hotspots */}
+      <nav className="sr-only" aria-label="Statue hotspots">
+        {lampHero.hotspots.map((h) => (
+          <a key={h.id} href={h.href}>
+            {h.label}
+          </a>
+        ))}
+      </nav>
     </section>
   )
 }
