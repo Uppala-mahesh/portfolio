@@ -1,0 +1,36 @@
+<!doctype html><meta charset="utf-8">
+<body><pre id="out">PENDING</pre>
+<script>
+const CrownScan = async () => {
+  // Scan the shipped gold image: per-row peak luminance in the statue area.
+  // Threshold picks rows where the statue (bright, spotlit) exists.
+  const img = new Image();
+  img.src = '/nataraja-gold-1600.webp';
+  await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+  const c = document.createElement('canvas');
+  const H = img.naturalHeight, W = img.naturalWidth;
+  c.width = W; c.height = H;
+  const g = c.getContext('2d', { willReadFrequently: true });
+  g.drawImage(img, 0, 0, W, H);
+  const px = g.getImageData(0, 0, W, H).data;
+  const lum = (i) => 0.2126*px[i] + 0.7152*px[i+1] + 0.0722*px[i+2];
+  const rows = [];
+  for (let y = 0; y < H; y++) {
+    let peak = 0, col = -1;
+    for (let x = 0; x < W; x += 2) {
+      const l = lum((y*W + x)*4);
+      if (l > peak) { peak = l; col = x; }
+    }
+    rows.push(peak);
+  }
+  // noise floor: median of darkest 1000 rows
+  const sorted = [...rows].sort((a,b)=>a-b);
+  const floor = sorted[Math.floor(sorted.length*0.25)];
+  const TH = floor + (Math.max(...rows) - floor) * 0.18;
+  let top = 0; while (top < H && rows[top] < TH) top++;
+  let bot = H-1; while (bot > 0 && rows[bot] < TH) bot--;
+  document.getElementById('out').textContent =
+    `W=${W} H=${H} TOP=${top} BOTTOM=${bot} topFrac=${(top/H).toFixed(4)} botFrac=${(bot/H).toFixed(4)} TH=${TH.toFixed(1)} peak=${Math.max(...rows).toFixed(1)}`;
+};
+CrownScan().catch(e => { document.getElementById('out').textContent = 'ERR ' + e.message; });
+</script>

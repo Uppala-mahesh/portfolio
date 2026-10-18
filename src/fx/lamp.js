@@ -145,13 +145,39 @@ const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
 
 // object-fit: cover — the exact crop the CSS <img> shows.
 // ex/ey are how much scaled image overflows the box (css px).
+//
+// STATUTE-SAFE COVER: the statue's bright extent in the source images was
+// measured (luminance scan, _audit/extents.html): crown top at STAT_TOP,
+// foot base at STAT_BOT (fractions of image height; margins above/below are
+// empty background). We cap the cover scale so crown and feet can never be
+// cropped out, and clamp the vertical anchor so the visible band stays
+// inside [STAT_TOP−PAD, STAT_BOT+PAD]. On wide, short windows the image
+// underfills horizontally by a few dozen px; the bands blend into the dark
+// page background (both photos are near-black at the edges).
+const STAT_TOP = 0.0728 // crown margin
+const STAT_BOT = 0.9464 // foot margin
+const STAT_PAD = 0.015  // keep this much of the empty margin visible
+
 function cover(iw, ih, bw, bh) {
-  const s = Math.max(bw / iw, bh / ih)
+  const sCover = Math.max(bw / iw, bh / ih)
+  // max scale for which the whole statue band (plus pads) still fits the box:
+  // sh − bh ≤ (STAT_TOP + 1 − STAT_BOT + 2·PAD)·ih·s  →  solve for s
+  const sFit = bh / (ih * (STAT_BOT - STAT_TOP + 2 * STAT_PAD))
+  const s = Math.min(sCover, sFit)
   const sw = iw * s
   const sh = ih * s
   const ex = Math.max(0, sw - bw)
   const ey = Math.max(0, sh - bh)
-  return { s, sw, sh, ex, ey, posX: 0.5, posY: 0.45 }
+  // Clamp the visible window by its top edge t (in IMAGE-fraction units,
+  // y-down): crown must be fully below window top, feet fully above window
+  // bottom. Both-reserve feasibility is guaranteed by s ≤ sFit above.
+  const visFrac = bh / sh // fraction of image height visible in the box
+  const tLo = Math.max(0, STAT_BOT + STAT_PAD - visFrac)
+  const tHi = Math.min(1 - visFrac, STAT_TOP - STAT_PAD)
+  const coF = (tLo + tHi) / 2 // visible-window top as image fraction
+  // convert to posY (fraction of the vertical overflow cropped above):
+  const posY = ey > 0 ? coF * sh / ey : 0
+  return { s, sw, sh, ex, ey, posX: 0.5, posY: clamp(posY, 0, 1) }
 }
 
 export function createLamp(opts) {
@@ -252,6 +278,13 @@ class Lamp {
     this.vis = { w: bw, h: bh }
     this.rect = { left: r.left, top: r.top }
     this.cov = cover(this.iw, this.ih, bw, bh)
+    // keep the semantic <img> (and the css-fallback layer, if it exists)
+    // pixel-registered with the shader's cover math — same statue-safe
+    // anchor. 50% horizontal default; ex may be 0 (banded) on wide windows.
+    const objPos = '50% ' + (this.cov.posY * 100).toFixed(3) + '%'
+    this.base.style.objectPosition = objPos
+    const fb = this.mount.querySelector('.lamp-fallback-gold')
+    if (fb) fb.style.objectPosition = objPos
     this.radiusBase = clamp(Math.min(bw, bh) * 0.46, 240, 640)
     this.home = this.imgToHeroUV(0.5, 0.14)      // just above the crown
     if (!this.pos) {
