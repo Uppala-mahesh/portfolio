@@ -208,7 +208,7 @@ export const projects = [
       ['pieces', 'blocks + hashing'],
       ['validates', 'the chain'],
     ],
-    links: [],
+    links: [{ label: 'Code', href: 'https://github.com/Uppala-mahesh/blockchain-simulator' }],
   },
 ]
 
