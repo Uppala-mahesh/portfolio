@@ -17,7 +17,7 @@
   --color-ink: #ede3d2;
   --color-muted: #a79c8a;
   --color-tomato: #e79a4b;
-  --color-teal: #9a5b2d;
+  --color-teal: #c07a42; /* lightened copper for small text — ≥4.5:1 on paper (was #9a5b2d) */
   --color-marker: #e79a4b;
   --color-panel: #100c09;
   --color-line: #2a2119;
@@ -108,6 +108,12 @@ body {
   font-family: var(--font-serif);
   font-style: italic;
   color: color-mix(in srgb, var(--color-muted) 90%, transparent);
+}
+/* links inside mixed text must not rely on color alone (footer 'say hi') */
+.u-note a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
 
 /* highlighter sweep — amber chalk on dark, sweeps on hover */

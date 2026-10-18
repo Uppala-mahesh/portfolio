@@ -203,6 +203,7 @@ class Lamp {
     this.onPointerMove = this.onPointerMove.bind(this)
     this.onPointerDown = this.onPointerDown.bind(this)
     this.onPointerUp = this.onPointerUp.bind(this)
+    this.onPointerCancel = this.onPointerCancel.bind(this)
     this.onScroll = this.onScroll.bind(this)
     this.onVis = this.onVis.bind(this)
     this.onReduce = this.onReduce.bind(this)
@@ -221,6 +222,7 @@ class Lamp {
     m.addEventListener('pointermove', this.onPointerMove, { passive: true })
     m.addEventListener('pointerdown', this.onPointerDown, { passive: true })
     m.addEventListener('pointerup', this.onPointerUp, { passive: true })
+    m.addEventListener('pointercancel', this.onPointerCancel, { passive: true })
     window.addEventListener('scroll', this.onScroll, { passive: true })
     document.addEventListener('visibilitychange', this.onVis)
     this.reduce.addEventListener?.('change', this.onReduce)
@@ -316,6 +318,12 @@ class Lamp {
   }
 
   onPointerUp() {
+    this.dragging = false
+  }
+
+  // mobile: if a touch-drag becomes a native scroll (pan-y), the browser
+  // cancels the pointer — clear the flag or idle drift never comes back.
+  onPointerCancel() {
     this.dragging = false
   }
 
@@ -628,6 +636,7 @@ class Lamp {
     m.removeEventListener('pointermove', this.onPointerMove)
     m.removeEventListener('pointerdown', this.onPointerDown)
     m.removeEventListener('pointerup', this.onPointerUp)
+    m.removeEventListener('pointercancel', this.onPointerCancel)
     window.removeEventListener('scroll', this.onScroll)
     document.removeEventListener('visibilitychange', this.onVis)
     this.reduce.removeEventListener?.('change', this.onReduce)
