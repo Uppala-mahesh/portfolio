@@ -178,7 +178,7 @@ export const projects = [
       ['db', 'mysql + drizzle'],
       ['ui', 'live charts'],
     ],
-    links: [],
+    links: [{ label: 'Code', href: 'https://github.com/Uppala-mahesh/battery-soh-rul-pro' }],
   },
   {
     id: 'P.05',
